@@ -1,11 +1,19 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 
 // register
-const registerUser = async (request: Request, response: Response) => {
+const registerUser = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
   const { name, email, password } = request.body;
-  const user = await UserService.addUser(name, email, password);
-  response.json(user?.email);
+  try {
+    const user = await UserService.addUser(name, email, password);
+    response.json(user?.email);
+  } catch (error: any) {
+    next(error);
+  }
 };
 
 // login

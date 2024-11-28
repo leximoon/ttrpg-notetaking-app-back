@@ -9,6 +9,11 @@ const addUserSchema = z.object({
   password: z.string().min(8),
 });
 
+const loginoutUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
 // register
 export class UserService {
   static async addUser(name: string, email: string, password: string) {
@@ -25,5 +30,18 @@ export class UserService {
     // save user in db
     const user = create(email, hashedPassword, name);
     return user;
+  }
+
+  static async loginUser(email: string, password: string) {
+    loginoutUserSchema.parse({ email, password });
+    const user = await findByEmail(email);
+    if (!user) {
+      throw new CustomError("Email is not registered.", 404);
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new CustomError("Wrong email or password.", 401);
+    }
+    // TODO: return user with token
+    return console.log("logged in");
   }
 }

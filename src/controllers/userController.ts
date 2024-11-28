@@ -17,6 +17,22 @@ const registerUser = async (
 };
 
 // login
+
+const loginUser = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const { email, password } = request.body;
+
+  try {
+    const user = await UserService.loginUser(email, password);
+    // TODO: token
+    response.json({ message: "Login successful" });
+  } catch (error: any) {
+    next(error);
+  }
+};
 // logout
 
-export { registerUser };
+export { registerUser, loginUser };

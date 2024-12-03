@@ -1,1 +1,1 @@
-export const { PORT = 3000 } = process.env;
+export const { PORT = 5000 } = process.env;

@@ -1,6 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
+import { request } from "http";
+
+const currentUser = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        console.log(request.user);
+        const userID = await UserService.findCurrentUser(request.user.id);
+        response.json(userID);
+    } catch (error: any) {
+        next(error);
+    }
+};
 
 // register
 const registerUser = async (
@@ -65,4 +80,4 @@ const loginUser = async (
 };
 // logout
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, currentUser };

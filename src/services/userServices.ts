@@ -1,6 +1,6 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { create, findByEmail } from "../db/userRepository";
+import { create, findByEmail, findById } from "../db/userRepository";
 import { CustomError } from "../utils/customError";
 
 const addUserSchema = z.object({
@@ -44,5 +44,18 @@ export class UserService {
 
         console.log(`User ${user.email} logged in`);
         return user;
+    }
+
+    static async findCurrentUser(userID: string) {
+        if (!userID) {
+            throw new CustomError("User not authorized", 403);
+        }
+
+        const user = await findById(userID);
+
+        if (!user) {
+            throw new CustomError("User not found", 404);
+        }
+        return user.id;
     }
 }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { verifyJWT } from "../utils/authUtils";
 import { JwtPayload } from "jsonwebtoken";
 import { findById } from "../db/userRepository";
+import { CustomError } from "../utils/customError";
 
 export async function deserializeUser(
     req: Request,
@@ -10,15 +11,15 @@ export async function deserializeUser(
 ) {
     const { accessToken } = req.cookies;
 
-    if (!accessToken) {
-        return next();
-    }
     //TODO: use refresh token to get new access token
-    //TODO: create sessioon property in req object instead of user
+
     try {
+        if (!accessToken) {
+            throw new CustomError("Unable to access the route.", 401);
+        }
         const { payload } = verifyJWT(accessToken);
         if (!payload) {
-            return next();
+            throw new CustomError("The session has expired", 401);
         }
         const user = await findById(payload);
 

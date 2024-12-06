@@ -22,7 +22,6 @@ app.use(cookieParser());
 
 app.use("/user", userRouter);
 app.use("/world", worldRouter);
-app.use(userRouter);
 app.use("/documents", documentRouter);
 
 app.get("/", (request, response) => {

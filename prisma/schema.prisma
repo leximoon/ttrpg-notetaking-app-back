@@ -18,5 +18,16 @@ model User {
   email     String  @unique
   password  String
   name      String
+
+}
+
+model World{
+    id String @id @map("_id") @default(cuid())
+    name String 
+    description String
+    icon String
+    userID String
+    isPublic Boolean
+    members String[]
 }
 

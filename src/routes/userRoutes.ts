@@ -8,13 +8,13 @@ import { deserializeUser } from "../middlewares/deserializeUser";
 
 const userRouter = Router();
 
-userRouter.post("/user/register", registerUser);
-userRouter.post("/user/login", loginUser);
+userRouter.post("/register", registerUser);
+userRouter.post("/login", loginUser);
 //userRouter.post("/user/logout", logoutUser)
 
 //Protected routes
 userRouter.use(deserializeUser);
 
-userRouter.get("/user/me", currentUser);
+userRouter.get("/me", currentUser);
 
 export { userRouter };

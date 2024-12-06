@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
-import { request } from "http";
 
 const currentUser = async (
     request: Request,
@@ -11,6 +10,7 @@ const currentUser = async (
     try {
         console.log(request.user);
         const userID = await UserService.findCurrentUser(request.user.id);
+        console.log(`User ${userID} is authorized`);
         response.json(userID);
     } catch (error: any) {
         next(error);
@@ -26,7 +26,14 @@ const registerUser = async (
     const { name, email, password } = request.body;
     try {
         const user = await UserService.addUser(name, email, password);
-        response.json(user?.email);
+        response.send({
+            message: "User register successfully",
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+            },
+        });
     } catch (error: any) {
         next(error);
     }
@@ -54,14 +61,15 @@ const loginUser = async (
         //Adding tokens to cookies
         response.cookie("accessToken", accessToken, {
             httpOnly: true, // Cookie only accessible by the server
-            sameSite: "lax", // Cookie only sent to same origin
+            sameSite: "none", // Cookie only sent to same origin
             maxAge: 10000 * 60 * 60 * 24 * 30 * 12, // 1year
             secure: false, // Set to true if you're using https
         });
+        console.log(accessToken);
 
         response.cookie("refreshToken", refreshToken, {
             httpOnly: true, // Cookie only accessible by the server
-            sameSite: "lax", // Cookie only sent to same origin
+            sameSite: "none", // Cookie only sent to same origin
             maxAge: 10000 * 60 * 60 * 24 * 30 * 12, // 1year
             secure: false, // Set to true if you're using https
         });

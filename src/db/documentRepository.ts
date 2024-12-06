@@ -2,20 +2,29 @@ import DbClient from "./db";
 
 const db = DbClient.getInstance().prisma;
 
+// Create new document
 async function create(title: string, userId: string) {
   // TODO: get db.document to work
   const document = await db.document.create({
     data: {
       id: crypto.randomUUID(),
       title: title,
-      // TODO: get userId from session
+      userId: userId,
       // TODO: get parentDocumentId if created in one
       isArchived: false,
-      isPublic: true,
+      isPublic: false,
     },
   });
 
   return document;
 }
 
-export { create };
+// Find all documents with userId
+async function findByUserId(userId: string) {
+  const documents = await db.document.findMany({
+    where: { userId: userId },
+  });
+  return documents;
+}
+
+export { create, findByUserId };

@@ -1,18 +1,16 @@
-import { z } from "zod";
-import { create } from "../db/documentRepository";
-import { User } from "@prisma/client";
-
-const addDocumentSchema = z.object({
-  title: z.string(),
-});
+import { create, findByUserId } from "../db/documentRepository";
 
 // CREATE DOCUMENT
 export class DocumentService {
-  static async addDocument(title: string, user: User) {
-    addDocumentSchema.parse({ title });
-
-    const document = create(title, user.id);
+  static async addDocument(title: string, userId: string) {
+    const document = create(title, userId);
 
     return document;
+  }
+
+  static async loadUserDocuments(userId: string) {
+    const documents = findByUserId(userId);
+
+    return documents;
   }
 }

@@ -5,6 +5,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { worldRouter } from "./routes/worldRoutes";
+import { documentRouter } from "./routes/documentRoutes";
 
 const app = express();
 
@@ -21,6 +22,8 @@ app.use(cookieParser());
 
 app.use("/user", userRouter);
 app.use("/world", worldRouter);
+app.use(userRouter);
+app.use("/documents", documentRouter);
 
 app.get("/", (request, response) => {
     response.send("Hello nerds!");

@@ -4,7 +4,7 @@ import {
     loginUser,
     currentUser,
 } from "../controllers/userController";
-import { deserializeUser } from "../middlewares/deserializeUser";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 const userRouter = Router();
 
@@ -13,7 +13,7 @@ userRouter.post("/login", loginUser);
 //userRouter.post("/user/logout", logoutUser)
 
 //Protected routes
-userRouter.use(deserializeUser);
+userRouter.use(isAuthenticated);
 
 userRouter.get("/me", currentUser);
 

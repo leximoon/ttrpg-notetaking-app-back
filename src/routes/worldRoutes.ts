@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { deserializeUser } from "../middlewares/deserializeUser";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
 import {
     createWorld,
     currentUserWorlds,
@@ -9,9 +9,10 @@ import {
 
 const worldRouter = Router();
 
+//Get all public worlds
 worldRouter.get("/", getAllWorlds);
 
-worldRouter.use(deserializeUser);
+worldRouter.use(isAuthenticated);
 
 worldRouter.post("/", createWorld);
 worldRouter.get("/me", currentUserWorlds);

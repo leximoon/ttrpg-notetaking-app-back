@@ -22,8 +22,8 @@ const currentUserWorlds = async (
     next: NextFunction
 ) => {
     try {
-        const user = req.user as User;
-        const worlds = await WorldService.getUserWorlds(user.id);
+        const userID = req.userID;
+        const worlds = await WorldService.getUserWorlds(userID);
         res.json(worlds);
     } catch (error: any) {
         next(error);
@@ -31,10 +31,10 @@ const currentUserWorlds = async (
 };
 const createWorld = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user as User;
+        const userID = req.userID;
         const { name, description, isPublic } = req.body;
         const world = await WorldService.addWorld(
-            user.id,
+            userID,
             name,
             description,
             isPublic

@@ -4,30 +4,26 @@ import { JwtPayload } from "jsonwebtoken";
 import { findById } from "../db/userRepository";
 import { CustomError } from "../utils/customError";
 
-export async function deserializeUser(
+export async function isAuthenticated(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
     const { accessToken } = req.cookies;
 
-    //TODO: use refresh token to get new access token
-
     try {
         if (!accessToken) {
             throw new CustomError("Unable to access the route.", 401);
         }
         const { payload } = verifyJWT(accessToken);
+        //TODO: use refresh token to get new access token
         if (!payload) {
             throw new CustomError("The session has expired", 401);
         }
-        const user = await findById(payload);
 
         //console.log(`User ${JSON.stringify(user)} session restored`);
 
-        if (user) {
-            req.user = user;
-        }
+        req.userID = payload;
 
         next();
     } catch (error: any) {

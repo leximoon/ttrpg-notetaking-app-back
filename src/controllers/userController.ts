@@ -8,8 +8,7 @@ const currentUser = async (
     next: NextFunction
 ) => {
     try {
-        console.log(request.user);
-        const userID = await UserService.findCurrentUser(request.user.id);
+        const userID = await UserService.findCurrentUser(request.userID);
         console.log(`User ${userID} is authorized`);
         response.json(userID);
     } catch (error: any) {

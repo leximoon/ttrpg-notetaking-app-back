@@ -20,3 +20,17 @@ model User {
   name      String
 }
 
+model Document {
+  id                String  @id @map("_id") @default(cuid())
+  title             String
+  userId            String
+  worldId           String
+  parentDocumentId  String?
+  content           String?
+  metadata          Json?
+  bannerImage       String?
+  icon              String?
+  isArchived        Boolean
+  isPublic          Boolean
+} // TODO: Add indexes??
+

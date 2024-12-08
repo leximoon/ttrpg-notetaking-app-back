@@ -10,15 +10,15 @@ import {
 
 const worldRouter = Router();
 
-//Get all public worlds
-worldRouter.get("/public", getAllPublicWorlds);
-
 worldRouter.use(isAuthenticated);
 
 worldRouter.post("/", createWorld);
 
+//Get all public worlds
+worldRouter.get("/public", getAllPublicWorlds);
 worldRouter.get("/me", getCurrentUserWorlds);
 
+//Get a specific world
 worldRouter.get("/:worldId", getWorld);
 
 export { worldRouter };

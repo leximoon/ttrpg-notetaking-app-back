@@ -4,43 +4,44 @@ import { CustomError } from "../utils/customError";
 
 // CREATE DOCUMENT
 const createDocument = async (
-  request: Request,
-  response: Response,
-  next: NextFunction
+    request: Request,
+    response: Response,
+    next: NextFunction
 ) => {
-  const { title } = request.body;
-  console.log("Creating document...");
-  try {
-    //TODO: When login fixed change userid to request.user.id
-    const document = await DocumentService.addDocument(
-      title,
-      "13bbf4e6-aab8-4186-acb0-e909d0bc67bb"
-    );
-    response.json(document);
-  } catch (error: any) {
-    next(error);
-  }
+    const { title } = request.body;
+    const userId = request.userID;
+    const { worldId } = request.body;
+
+    console.log("Creating document...");
+    try {
+        const document = await DocumentService.addDocument(
+            title,
+            userId,
+            worldId
+        );
+        response.json(document);
+    } catch (error: any) {
+        next(error);
+    }
 };
 
-// LOAD USER DOCUMENTS
-const loadUserDocuments = async (
-  request: Request,
-  response: Response,
-  next: NextFunction
+// LOAD WORLD DOCUMENTS
+const loadWorldDocuments = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
 ) => {
-  console.log("Loading documents...");
-  try {
-    /*const user = request.user
-    if (!user) {
-      throw new CustomError("", 403);
-    }*/
-    const documents = await DocumentService.loadUserDocuments(
-      "13bbf4e6-aab8-4186-acb0-e909d0bc67bb"
-    );
-    response.json(documents);
-  } catch (error: any) {
-    next(error);
-  }
+    console.log("Loading documents...");
+    try {
+        const { worldId } = request.body;
+        if (!worldId) {
+            throw new CustomError("", 403);
+        }
+        const documents = await DocumentService.loadWorldDocuments(worldId);
+        response.json(documents);
+    } catch (error: any) {
+        next(error);
+    }
 };
 
-export { createDocument, loadUserDocuments };
+export { createDocument, loadWorldDocuments };

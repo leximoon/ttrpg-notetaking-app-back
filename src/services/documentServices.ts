@@ -1,16 +1,16 @@
-import { create, findByUserId } from "../db/documentRepository";
+import { create, findByWorldId } from "../db/documentRepository";
 
 // CREATE DOCUMENT
 export class DocumentService {
-  static async addDocument(title: string, userId: string) {
-    const document = create(title, userId);
+    static async addDocument(title: string, userId: string, worldId: string) {
+        const document = create(title, userId, worldId);
 
-    return document;
-  }
+        return document;
+    }
 
-  static async loadUserDocuments(userId: string) {
-    const documents = findByUserId(userId);
+    static async loadWorldDocuments(worldId: string) {
+        const documents = findByWorldId(worldId);
 
-    return documents;
-  }
+        return documents;
+    }
 }

@@ -1,11 +1,16 @@
-import { getAll, create } from "../db/worldRepository";
+import { findAll, create, findByUserId, findById } from "../db/worldRepository";
 
 export class WorldService {
-    static async getUserWorlds(userID: string) {}
-
-    static async getWorlds() {
-        const worlds = await getAll();
-
+    static async getUserWorlds(userID: string) {
+        const worlds = await findByUserId(userID);
+        return worlds;
+    }
+    static async getWorldById(worldID: string) {
+        const world = await findById(worldID);
+        return world;
+    }
+    static async getWorlds(isPublic: boolean) {
+        const worlds = await findAll(isPublic);
         return worlds;
     }
     static async addWorld(

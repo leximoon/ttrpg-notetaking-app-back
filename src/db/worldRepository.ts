@@ -2,10 +2,20 @@ import DbClient from "./db";
 
 const db = DbClient.getInstance().prisma;
 
-async function getAll() {
+async function findAll(isPublic: boolean) {
     const world = await db.world.findMany({
         where: {
-            isPublic: true,
+            isPublic: isPublic,
+        },
+    });
+
+    return world;
+}
+
+async function findById(worldId: string) {
+    const world = await db.world.findUnique({
+        where: {
+            id: worldId,
         },
     });
 
@@ -46,4 +56,4 @@ async function create(
     return world;
 }
 
-export { findByUserId, getAll, create };
+export { findByUserId, findAll, findById, create };

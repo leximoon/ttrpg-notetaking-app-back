@@ -3,25 +3,26 @@ import { Request, Response } from "express";
 import { NextFunction } from "express-serve-static-core";
 import { WorldService } from "../services/worldServices";
 
-const getAllWorlds = async (
+const getAllPublicWorlds = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const worlds = await WorldService.getWorlds();
+        const worlds = await WorldService.getWorlds(true);
         res.json(worlds);
     } catch (error: any) {
         next(error);
     }
 };
 
-const currentUserWorlds = async (
+const getCurrentUserWorlds = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
+        console.log(`retriving worlds for user ${req.userID}`);
         const userID = req.userID;
         const worlds = await WorldService.getUserWorlds(userID);
         res.json(worlds);
@@ -44,5 +45,15 @@ const createWorld = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+const getWorld = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const worldId = req.params.worldId;
+        console.log("Loading world: ", worldId);
+        const world = await WorldService.getWorldById(worldId);
+        res.json(world);
+    } catch (error: any) {
+        next(error);
+    }
+};
 
-export { currentUserWorlds, getAllWorlds, createWorld };
+export { getAllPublicWorlds, getCurrentUserWorlds, createWorld, getWorld };

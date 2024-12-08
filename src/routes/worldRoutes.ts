@@ -3,18 +3,22 @@ import { Router } from "express";
 import { isAuthenticated } from "../middlewares/isAuthenticated";
 import {
     createWorld,
-    currentUserWorlds,
-    getAllWorlds,
+    getCurrentUserWorlds,
+    getAllPublicWorlds,
+    getWorld,
 } from "../controllers/worldController";
 
 const worldRouter = Router();
 
-//Get all public worlds
-worldRouter.get("/", getAllWorlds);
-
 worldRouter.use(isAuthenticated);
 
 worldRouter.post("/", createWorld);
-worldRouter.get("/me", currentUserWorlds);
+
+//Get all public worlds
+worldRouter.get("/public", getAllPublicWorlds);
+worldRouter.get("/me", getCurrentUserWorlds);
+
+//Get a specific world
+worldRouter.get("/:worldId", getWorld);
 
 export { worldRouter };

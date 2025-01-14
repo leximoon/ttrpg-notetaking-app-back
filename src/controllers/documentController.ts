@@ -8,9 +8,8 @@ const createDocument = async (
     response: Response,
     next: NextFunction
 ) => {
-    const { title } = request.body;
+    const { title, worldId } = request.body;
     const userId = request.userID;
-    const { worldId } = request.body;
 
     console.log("Creating document...");
     try {
@@ -33,7 +32,7 @@ const loadWorldDocuments = async (
 ) => {
     console.log("Loading documents...");
     try {
-        const { worldId } = request.body;
+        const worldId = request.params.worldId;
         if (!worldId) {
             throw new CustomError("", 403);
         }

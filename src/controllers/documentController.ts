@@ -28,6 +28,48 @@ const createDocument = async (
     }
 };
 
+// EDIT DOCUMENT
+const updateDocument = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const { documentId, field, content } = request.body;
+    const userId = request.userID;
+
+    console.log("Editing document...");
+    try {
+        const document = await DocumentService.updateDocument(
+            documentId,
+            field,
+            content
+        );
+        response.json(document);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+// DELETE DOCUMENT
+const deleteDocument = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const { documentId } = request.body;
+    const userId = request.userID;
+
+    console.log("Editing document...");
+    try {
+        const document = await DocumentService.deleteDocument(documentId);
+        response.send({
+            message: "Document deleted",
+        });
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 // LOAD WORLD DOCUMENTS
 const loadWorldDocuments = async (
     request: Request,
@@ -51,4 +93,4 @@ const loadWorldDocuments = async (
     }
 };
 
-export { createDocument, loadWorldDocuments };
+export { createDocument, updateDocument, deleteDocument, loadWorldDocuments };

@@ -2,13 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import { DocumentService } from "../services/documentServices";
 import { CustomError } from "../utils/customError";
 
+type QueryParams = {
+    parentDocumentId?: string;
+};
 // CREATE DOCUMENT
 const createDocument = async (
     request: Request,
     response: Response,
     next: NextFunction
 ) => {
-    const { title, worldId } = request.body;
+    const { title, worldId, parentDocumentId } = request.body;
     const userId = request.userID;
 
     console.log("Creating document...");
@@ -16,7 +19,8 @@ const createDocument = async (
         const document = await DocumentService.addDocument(
             title,
             userId,
-            worldId
+            worldId,
+            parentDocumentId
         );
         response.json(document);
     } catch (error: any) {
@@ -30,13 +34,17 @@ const loadWorldDocuments = async (
     response: Response,
     next: NextFunction
 ) => {
+    const { parentDocumentId } = request.query as QueryParams;
     console.log("Loading documents...");
     try {
         const worldId = request.params.worldId;
         if (!worldId) {
             throw new CustomError("", 403);
         }
-        const documents = await DocumentService.loadWorldDocuments(worldId);
+        const documents = await DocumentService.loadWorldDocuments(
+            worldId,
+            parentDocumentId
+        );
         response.json(documents);
     } catch (error: any) {
         next(error);

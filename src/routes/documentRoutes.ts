@@ -13,8 +13,8 @@ const documentRouter = Router();
 documentRouter.use(isAuthenticated);
 
 documentRouter.post("/add", createDocument);
-documentRouter.post("/update", updateDocument);
-documentRouter.post("/delete", deleteDocument);
+documentRouter.put("/update", updateDocument);
+documentRouter.delete("/delete", deleteDocument);
 documentRouter.get("/:worldId", loadWorldDocuments);
 
 export { documentRouter };

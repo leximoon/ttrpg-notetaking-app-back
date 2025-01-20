@@ -69,6 +69,7 @@ async function findByWorldId(worldId: string, parentDocumentId?: string) {
             where: {
                 worldId: worldId,
                 parentDocumentId: null,
+                isArchived: false,
             },
             orderBy: {
                 title: "asc",

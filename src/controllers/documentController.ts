@@ -62,9 +62,7 @@ const deleteDocument = async (
     console.log("Editing document...");
     try {
         const document = await DocumentService.deleteDocument(documentId);
-        response.send({
-            message: "Document deleted",
-        });
+        response.json(document);
     } catch (error: any) {
         next(error);
     }

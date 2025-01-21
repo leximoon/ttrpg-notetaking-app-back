@@ -6,7 +6,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { worldRouter } from "./routes/worldRoutes";
 import { documentRouter } from "./routes/documentRoutes";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 //TODO: move app configurations
@@ -33,5 +35,5 @@ app.use(errorHandler);
 
 // last
 app.listen(PORT, () => {
-    console.log(`All is aye ok!`);
+    console.log(`All is aye ok! `, process.env.ACCESS_TOKEN_EXPIRE_TIME);
 });

@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyJWT } from "../utils/authUtils";
-import { JwtPayload } from "jsonwebtoken";
-import { findById } from "../db/userRepository";
+import { extractTokenFromHeader, verifyJWT } from "../utils/authUtils";
 import { CustomError } from "../utils/customError";
 
 export async function isAuthenticated(
@@ -9,10 +7,12 @@ export async function isAuthenticated(
     res: Response,
     next: NextFunction
 ) {
-    const { accessToken } = req.cookies;
-
+    console.log("trying to authenticate");
+    const accessToken = extractTokenFromHeader(req);
+    console.log("accessToken ", accessToken);
     try {
         if (!accessToken) {
+            console.error("Token not found");
             throw new CustomError("Unable to access the route.", 401);
         }
         const { payload } = verifyJWT(accessToken);
@@ -27,6 +27,7 @@ export async function isAuthenticated(
 
         next();
     } catch (error: any) {
-        next;
+        console.log("Redirecting to error handler");
+        next(error);
     }
 }

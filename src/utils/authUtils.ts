@@ -1,8 +1,12 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { Request, Response } from "express";
 //Create JWT
-export const createToken = async (payload: any, expireTime: string) => {
+export const createToken = async (
+    payload: any,
+    expireTime: string | undefined
+) => {
     return await jwt.sign({ payload }, process.env.JWT_SECRET!, {
-        expiresIn: expireTime,
+        expiresIn: expireTime ?? "1d",
     });
 };
 
@@ -21,4 +25,13 @@ export function verifyJWT(token: string) {
             expired: error.message?.includes("jwt expired"),
         };
     }
+}
+
+export function extractTokenFromHeader(req: Request) {
+    const header = req.header("Authorization") || "";
+    const token = header.split(" ")[1];
+    if (!token) {
+        return null;
+    }
+    return token;
 }

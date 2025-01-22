@@ -3,8 +3,8 @@ import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
 
 //TODO: link accessToken expire time from env to this value in ms.
-//1h of access token expire time
-const TOKEN_EXPIRE_TIME = 60 * 60 * 1000;
+//15m of access token expire time
+const TOKEN_EXPIRE_TIME = 15 * 60 * 1000;
 
 const currentUser = async (
     request: Request,

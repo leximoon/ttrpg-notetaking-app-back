@@ -6,7 +6,7 @@ import {
     deleteDocument,
     loadWorldDocuments,
 } from "../controllers/documentController";
-import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAuthenticated } from "../middlewares/authHandler";
 
 const documentRouter = Router();
 //Protected routes

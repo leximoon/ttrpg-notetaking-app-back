@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
 
-const TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000;
+//TODO: link accessToken expire time from env to this value in ms.
+//1h of access token expire time
+const TOKEN_EXPIRE_TIME = 60 * 60 * 1000;
 
 const currentUser = async (
     request: Request,
@@ -79,4 +81,32 @@ const loginUser = async (
 };
 // logout
 
-export { registerUser, loginUser, currentUser };
+// refresh token
+
+const refreshToken = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const userId = request.userID;
+    console.log("The session has not expired, refreshing access token");
+    //Token Generation for accessing protected routes
+    const accessToken = await createToken(
+        userId,
+        process.env.ACCESS_TOKEN_EXPIRE_TIME
+    );
+    console.log(accessToken);
+    const refreshToken = await createToken(
+        userId,
+        process.env.REFRESH_TOKEN_EXPIRE_TIME
+    );
+
+    console.log("Token refreshed: ", accessToken);
+
+    response.send({
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        expiresIn: new Date().setTime(new Date().getTime() + TOKEN_EXPIRE_TIME),
+    });
+};
+export { registerUser, loginUser, currentUser, refreshToken };

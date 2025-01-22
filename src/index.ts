@@ -35,5 +35,5 @@ app.use(errorHandler);
 
 // last
 app.listen(PORT, () => {
-    console.log(`All is aye ok! `, process.env.ACCESS_TOKEN_EXPIRE_TIME);
+    console.log(`Server is running on port: ${PORT}`);
 });

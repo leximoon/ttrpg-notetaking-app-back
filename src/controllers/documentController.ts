@@ -2,23 +2,66 @@ import { NextFunction, Request, Response } from "express";
 import { DocumentService } from "../services/documentServices";
 import { CustomError } from "../utils/customError";
 
+type QueryParams = {
+    parentDocumentId?: string;
+};
 // CREATE DOCUMENT
 const createDocument = async (
     request: Request,
     response: Response,
     next: NextFunction
 ) => {
-    const { title } = request.body;
+    const { title, worldId, parentDocumentId } = request.body;
     const userId = request.userID;
-    const { worldId } = request.body;
 
     console.log("Creating document...");
     try {
         const document = await DocumentService.addDocument(
             title,
             userId,
-            worldId
+            worldId,
+            parentDocumentId
         );
+        response.json(document);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+// EDIT DOCUMENT
+const updateDocument = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const { documentId, field, content } = request.body;
+    const userId = request.userID;
+
+    console.log("Editing document...");
+    try {
+        const document = await DocumentService.updateDocument(
+            documentId,
+            field,
+            content
+        );
+        response.json(document);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+// DELETE DOCUMENT
+const deleteDocument = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const { documentId } = request.body;
+    const userId = request.userID;
+
+    console.log("Editing document...");
+    try {
+        const document = await DocumentService.deleteDocument(documentId);
         response.json(document);
     } catch (error: any) {
         next(error);
@@ -31,17 +74,21 @@ const loadWorldDocuments = async (
     response: Response,
     next: NextFunction
 ) => {
+    const { parentDocumentId } = request.query as QueryParams;
     console.log("Loading documents...");
     try {
-        const { worldId } = request.body;
+        const worldId = request.params.worldId;
         if (!worldId) {
             throw new CustomError("", 403);
         }
-        const documents = await DocumentService.loadWorldDocuments(worldId);
+        const documents = await DocumentService.loadWorldDocuments(
+            worldId,
+            parentDocumentId
+        );
         response.json(documents);
     } catch (error: any) {
         next(error);
     }
 };
 
-export { createDocument, loadWorldDocuments };
+export { createDocument, updateDocument, deleteDocument, loadWorldDocuments };

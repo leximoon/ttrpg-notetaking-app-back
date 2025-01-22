@@ -16,12 +16,35 @@ export async function isAuthenticated(
             throw new CustomError("Unable to access the route.", 401);
         }
         const { payload } = verifyJWT(accessToken);
-        //TODO: use refresh token to get new access token
+
+        if (!payload) {
+            throw new CustomError("The accessToken has expired", 401);
+        }
+
+        req.userID = payload;
+
+        next();
+    } catch (error: any) {
+        console.log("Redirecting to error handler");
+        next(error);
+    }
+}
+export async function hasRefreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const refreshToken = extractTokenFromHeader(req);
+
+    try {
+        if (!refreshToken) {
+            console.error("Refresh token not found");
+            throw new CustomError("Unable to refresh the access token", 401);
+        }
+        const { payload } = verifyJWT(refreshToken);
         if (!payload) {
             throw new CustomError("The session has expired", 401);
         }
-
-        //console.log(`User ${JSON.stringify(user)} session restored`);
 
         req.userID = payload;
 

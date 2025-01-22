@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAuthenticated } from "../middlewares/authHandler";
 import {
     createWorld,
     getCurrentUserWorlds,

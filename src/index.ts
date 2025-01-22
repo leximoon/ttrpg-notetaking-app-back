@@ -4,12 +4,14 @@ import { userRouter } from "./routes/userRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { worldRouter } from "./routes/worldRoutes";
+import { documentRouter } from "./routes/documentRoutes";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 //TODO: move app configurations
-
-app.use(cookieParser());
 
 app.use(express.json());
 app.use(
@@ -18,8 +20,11 @@ app.use(
         origin: ["http://localhost:3000"],
     })
 );
+app.use(cookieParser());
 
-app.use(userRouter);
+app.use("/user", userRouter);
+app.use("/world", worldRouter);
+app.use("/documents", documentRouter);
 
 app.get("/", (request, response) => {
     response.send("Hello nerds!");
@@ -30,5 +35,5 @@ app.use(errorHandler);
 
 // last
 app.listen(PORT, () => {
-    console.log(`All is aye ok!`);
+    console.log(`Server is running on port: ${PORT}`);
 });

@@ -18,5 +18,30 @@ model User {
   email     String  @unique
   password  String
   name      String
+
 }
+
+model World{
+    id String @id @map("_id") @default(cuid())
+    name String 
+    description String
+    icon String
+    userID String
+    isPublic Boolean
+    members String[]
+}
+
+model Document {
+  id                String  @id @map("_id") @default(cuid())
+  title             String
+  userId            String
+  worldId           String
+  parentDocumentId  String?
+  content           String?
+  metadata          Json?
+  bannerImage       String?
+  icon              String?
+  isArchived        Boolean
+  isPublic          Boolean
+} // TODO: Add indexes??
 

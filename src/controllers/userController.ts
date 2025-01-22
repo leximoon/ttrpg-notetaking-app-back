@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
-import { request } from "http";
+
+const TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000;
 
 const currentUser = async (
     request: Request,
@@ -9,8 +10,7 @@ const currentUser = async (
     next: NextFunction
 ) => {
     try {
-        console.log(request.user);
-        const userID = await UserService.findCurrentUser(request.user.id);
+        const userID = await UserService.findCurrentUser(request.userID);
         response.json(userID);
     } catch (error: any) {
         next(error);
@@ -24,6 +24,7 @@ const registerUser = async (
     next: NextFunction
 ) => {
     const { name, email, password } = request.body;
+    console.log("Registering user ", name);
     try {
         const user = await UserService.addUser(name, email, password);
         response.json(user?.email);
@@ -39,39 +40,37 @@ const loginUser = async (
     response: Response,
     next: NextFunction
 ) => {
-    const { email, password } = request.body;
+    const { username, password } = request.body;
+    console.log("this is the body", request.body);
 
     try {
-        const user = await UserService.loginUser(email, password);
-
-        //TODO: define token times in .evn or config
+        console.log("Trying to log in user: ", username);
+        const user = await UserService.loginUser(username, password);
 
         //Token Generation for accessing protected routes
-        const accessToken = await createToken(user.id, "1y");
-        const refreshToken = await createToken(user.id, "1y");
+        const accessToken = await createToken(
+            user.id,
+            process.env.ACCESS_TOKEN_EXPIRE_TIME
+        );
+        const refreshToken = await createToken(
+            user.id,
+            process.env.REFRESH_TOKEN_EXPIRE_TIME
+        );
 
-        //TODO: maxAge .eenv or config
-        //Adding tokens to cookies
-        response.cookie("accessToken", accessToken, {
-            httpOnly: true, // Cookie only accessible by the server
-            sameSite: "lax", // Cookie only sent to same origin
-            maxAge: 10000 * 60 * 60 * 24 * 30 * 12, // 1year
-            secure: false, // Set to true if you're using https
-        });
-
-        response.cookie("refreshToken", refreshToken, {
-            httpOnly: true, // Cookie only accessible by the server
-            sameSite: "lax", // Cookie only sent to same origin
-            maxAge: 10000 * 60 * 60 * 24 * 30 * 12, // 1year
-            secure: false, // Set to true if you're using https
-        });
+        console.log("AccessToken: ", accessToken);
 
         response.send({
-            message: "Login successful",
             user: {
                 id: user.id,
                 email: user.email,
                 name: user.name,
+            },
+            backendTokens: {
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                expiresIn: new Date().setTime(
+                    new Date().getTime() + TOKEN_EXPIRE_TIME
+                ),
             },
         });
     } catch (error: any) {

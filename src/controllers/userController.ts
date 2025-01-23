@@ -40,13 +40,11 @@ const loginUser = async (
     next: NextFunction
 ) => {
     const { username, password } = request.body;
-    console.log("this is the body", request.body);
 
     try {
         console.log("Trying to log in user: ", username);
         const user = await UserService.loginUser(username, password);
 
-        //Token Generation for accessing protected routes
         console.log("User loged in: ", user);
         response.send(user);
     } catch (error: any) {

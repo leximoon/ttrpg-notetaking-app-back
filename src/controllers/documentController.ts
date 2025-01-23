@@ -91,4 +91,33 @@ const loadWorldDocuments = async (
     }
 };
 
-export { createDocument, updateDocument, deleteDocument, loadWorldDocuments };
+const loadDocument = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const documentId = request.params.documentId;
+    console.log(`Loading document ... ${documentId}`);
+    try {
+        if (!documentId) {
+            throw new CustomError("", 403);
+        }
+        const document = await DocumentService.loadDocumentById(documentId);
+        if (document === undefined) {
+            throw new CustomError("Document don't exist", 404);
+        }
+        console.log("Document loaded: ", document);
+
+        response.json(document);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
+export {
+    createDocument,
+    updateDocument,
+    deleteDocument,
+    loadWorldDocuments,
+    loadDocument,
+};

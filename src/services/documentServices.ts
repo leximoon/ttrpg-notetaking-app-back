@@ -1,4 +1,10 @@
-import { create, update, del, findByWorldId } from "../db/documentRepository";
+import {
+    create,
+    update,
+    del,
+    findByWorldId,
+    findById,
+} from "../db/documentRepository";
 
 // CREATE DOCUMENT
 export class DocumentService {
@@ -34,5 +40,10 @@ export class DocumentService {
         const documents = findByWorldId(worldId, parentDocumentId);
 
         return documents;
+    }
+    static async loadDocumentById(documentId: string) {
+        const document = findById(documentId);
+
+        return document;
     }
 }

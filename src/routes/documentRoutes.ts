@@ -5,6 +5,7 @@ import {
     updateDocument,
     deleteDocument,
     loadWorldDocuments,
+    loadDocument,
 } from "../controllers/documentController";
 import { isAuthenticated } from "../middlewares/authHandler";
 
@@ -16,5 +17,6 @@ documentRouter.post("/add", createDocument);
 documentRouter.put("/update", updateDocument);
 documentRouter.delete("/delete", deleteDocument);
 documentRouter.get("/:worldId", loadWorldDocuments);
+documentRouter.get("/load/:documentId", loadDocument);
 
 export { documentRouter };

@@ -59,7 +59,17 @@ async function delByWorldId(worldId: string) {
     return document;
 }
 
-// Find all documents with userId
+//Find single document
+async function findById(documentId: string) {
+    const document = await db.document.findUnique({
+        where: {
+            id: documentId,
+        },
+    });
+    return document;
+}
+
+// Find all documents with worldId
 async function findByWorldId(worldId: string, parentDocumentId?: string) {
     if (parentDocumentId) {
         const documents = await db.document.findMany({
@@ -88,4 +98,4 @@ async function findByWorldId(worldId: string, parentDocumentId?: string) {
     }
 }
 
-export { create, update, del, delByWorldId, findByWorldId };
+export { create, update, del, delByWorldId, findByWorldId, findById };

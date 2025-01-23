@@ -49,6 +49,15 @@ async function del(documentId: string) {
     });
     return document;
 }
+//Delete documents using worldID
+async function delByWorldId(worldId: string) {
+    const document = await db.document.deleteMany({
+        where: {
+            worldId: worldId,
+        },
+    });
+    return document;
+}
 
 // Find all documents with userId
 async function findByWorldId(worldId: string, parentDocumentId?: string) {
@@ -79,4 +88,4 @@ async function findByWorldId(worldId: string, parentDocumentId?: string) {
     }
 }
 
-export { create, update, del, findByWorldId };
+export { create, update, del, delByWorldId, findByWorldId };

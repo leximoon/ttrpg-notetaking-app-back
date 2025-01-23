@@ -1,4 +1,11 @@
-import { findAll, create, findByUserId, findById } from "../db/worldRepository";
+import { delByWorldId } from "../db/documentRepository";
+import {
+    findAll,
+    create,
+    del,
+    findByUserId,
+    findById,
+} from "../db/worldRepository";
 
 export class WorldService {
     static async getUserWorlds(userID: string) {
@@ -20,6 +27,12 @@ export class WorldService {
         isPublic: boolean
     ) {
         const world = await create(userID, name, description, isPublic);
+
+        return world;
+    }
+    static async deleteWorld(worldId: string) {
+        const world = await del(worldId);
+        const documents = await delByWorldId(worldId);
 
         return world;
     }

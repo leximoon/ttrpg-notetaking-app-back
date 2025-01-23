@@ -1,7 +1,13 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { create, findByEmail, findById } from "../db/userRepository";
+import {
+    create,
+    findByEmail,
+    findById,
+    updateUserInformation,
+} from "../db/userRepository";
 import { CustomError } from "../utils/customError";
+import { createToken } from "../utils/authUtils";
 
 const addUserSchema = z.object({
     name: z.string(),
@@ -13,6 +19,10 @@ const loginoutUserSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
 });
+
+//TODO: link accessToken expire time from env to this value in ms.
+//15m of access token expire time
+const TOKEN_EXPIRE_TIME = 15 * 60 * 1000;
 
 // register
 export class UserService {
@@ -41,9 +51,16 @@ export class UserService {
         if (!(await bcrypt.compare(password, user.password))) {
             throw new CustomError("Wrong email or password.", 401);
         }
+        const tokens = await UserService.updateTokens(user.id);
 
-        console.log(`User ${user.email} logged in`);
-        return user;
+        return {
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+            },
+            backendTokens: tokens,
+        };
     }
 
     static async findCurrentUser(userID: string) {
@@ -57,5 +74,44 @@ export class UserService {
             throw new CustomError("User not found", 404);
         }
         return user.id;
+    }
+
+    static async updateUser(userID: string, name: string, email: string) {
+        if (userID && !name && !email) {
+            throw new CustomError(
+                "No arguments sent. Unable to update user",
+                400
+            );
+        }
+
+        const updatedUser = await updateUserInformation(userID, name, email);
+        console.log("Updated user", updatedUser);
+        if (updatedUser === null) {
+            throw new CustomError("An error has occurred in the database", 500);
+        }
+        return updatedUser;
+    }
+
+    static async updateTokens(userId: string) {
+        //Token Generation for accessing protected routes
+        const accessToken = await createToken(
+            userId,
+            process.env.ACCESS_TOKEN_EXPIRE_TIME
+        );
+        console.log(accessToken);
+        const refreshToken = await createToken(
+            userId,
+            process.env.REFRESH_TOKEN_EXPIRE_TIME
+        );
+
+        console.log("Token refreshed: ", accessToken);
+
+        return {
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            expiresIn: new Date().setTime(
+                new Date().getTime() + TOKEN_EXPIRE_TIME
+            ),
+        };
     }
 }

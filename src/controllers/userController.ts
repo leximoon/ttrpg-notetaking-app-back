@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
-
-//TODO: link accessToken expire time from env to this value in ms.
-//15m of access token expire time
-const TOKEN_EXPIRE_TIME = 15 * 60 * 1000;
+import { CustomError } from "../utils/customError";
 
 const currentUser = async (
     request: Request,
@@ -29,7 +26,7 @@ const registerUser = async (
     console.log("Registering user ", name);
     try {
         const user = await UserService.addUser(name, email, password);
-        response.json(user?.email);
+        response.send(user);
     } catch (error: any) {
         next(error);
     }
@@ -50,36 +47,37 @@ const loginUser = async (
         const user = await UserService.loginUser(username, password);
 
         //Token Generation for accessing protected routes
-        const accessToken = await createToken(
-            user.id,
-            process.env.ACCESS_TOKEN_EXPIRE_TIME
-        );
-        const refreshToken = await createToken(
-            user.id,
-            process.env.REFRESH_TOKEN_EXPIRE_TIME
-        );
-
-        console.log("AccessToken: ", accessToken);
-
-        response.send({
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-            },
-            backendTokens: {
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                expiresIn: new Date().setTime(
-                    new Date().getTime() + TOKEN_EXPIRE_TIME
-                ),
-            },
-        });
+        console.log("User loged in: ", user);
+        response.send(user);
     } catch (error: any) {
         next(error);
     }
 };
-// logout
+// updateUser
+
+const updateUser = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    const userID = request.userID;
+    const { name, email } = request.body;
+    console.log("Updating user: ", userID);
+    try {
+        if (userID != request.params.userId) {
+            throw new CustomError(
+                "Unable to update user information. Token user id don`t match",
+                403
+            );
+        }
+
+        const newUser = await UserService.updateUser(userID, name, email);
+        console.log("This is the new user:", newUser);
+        response.send(newUser);
+    } catch (error: any) {
+        next(error);
+    }
+};
 
 // refresh token
 
@@ -89,24 +87,9 @@ const refreshToken = async (
     next: NextFunction
 ) => {
     const userId = request.userID;
-    console.log("The session has not expired, refreshing access token");
-    //Token Generation for accessing protected routes
-    const accessToken = await createToken(
-        userId,
-        process.env.ACCESS_TOKEN_EXPIRE_TIME
-    );
-    console.log(accessToken);
-    const refreshToken = await createToken(
-        userId,
-        process.env.REFRESH_TOKEN_EXPIRE_TIME
-    );
 
-    console.log("Token refreshed: ", accessToken);
+    const newTokens = await UserService.updateTokens(userId);
 
-    response.send({
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        expiresIn: new Date().setTime(new Date().getTime() + TOKEN_EXPIRE_TIME),
-    });
+    response.send(newTokens);
 };
-export { registerUser, loginUser, currentUser, refreshToken };
+export { registerUser, loginUser, currentUser, updateUser, refreshToken };

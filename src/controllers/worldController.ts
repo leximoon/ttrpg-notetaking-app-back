@@ -45,6 +45,17 @@ const createWorld = async (req: Request, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+const deleteWorld = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { worldId } = req.body;
+        console.log("Deleting world: ", worldId);
+        const world = await WorldService.deleteWorld(worldId);
+        res.json(world);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 const getWorld = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const worldId = req.params.worldId;
@@ -56,4 +67,10 @@ const getWorld = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { getAllPublicWorlds, getCurrentUserWorlds, createWorld, getWorld };
+export {
+    getAllPublicWorlds,
+    getCurrentUserWorlds,
+    createWorld,
+    deleteWorld,
+    getWorld,
+};

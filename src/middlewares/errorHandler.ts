@@ -19,7 +19,6 @@ export function errorHandler(
         errorMessage = error.message || "Internal server error.";
         console.log("An error has been occured: ", error.message);
         console.log("Status code: ", error.statusCode);
-        console.error(error);
     }
 
     res.send({ status: res.statusCode, message: errorMessage });

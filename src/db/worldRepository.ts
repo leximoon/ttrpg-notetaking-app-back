@@ -55,5 +55,14 @@ async function create(
 
     return world;
 }
+async function del(worldId: string) {
+    console.log("deleting world of the id :", worldId);
+    const world = await db.world.delete({
+        where: {
+            id: worldId,
+        },
+    });
+    return world.id;
+}
 
-export { findByUserId, findAll, findById, create };
+export { findByUserId, findAll, findById, create, del };

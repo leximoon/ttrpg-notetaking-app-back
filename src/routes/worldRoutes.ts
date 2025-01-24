@@ -1,11 +1,12 @@
 import { Router } from "express";
 
-import { isAuthenticated } from "../middlewares/isAuthenticated";
+import { isAuthenticated } from "../middlewares/authHandler";
 import {
     createWorld,
     getCurrentUserWorlds,
     getAllPublicWorlds,
     getWorld,
+    deleteWorld,
 } from "../controllers/worldController";
 
 const worldRouter = Router();
@@ -13,6 +14,7 @@ const worldRouter = Router();
 worldRouter.use(isAuthenticated);
 
 worldRouter.post("/", createWorld);
+worldRouter.delete("/delete", deleteWorld);
 
 //Get all public worlds
 worldRouter.get("/public", getAllPublicWorlds);

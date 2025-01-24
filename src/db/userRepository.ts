@@ -30,4 +30,16 @@ async function findById(id: string) {
     return user;
 }
 
-export { create, findByEmail, findById };
+async function updateUserInformation(id: string, name: string, email: string) {
+    const user = await db.user.update({
+        where: {
+            id: id,
+        },
+        data: {
+            name: name,
+            email: email,
+        },
+    });
+    return user;
+}
+export { create, findByEmail, findById, updateUserInformation };

@@ -35,7 +35,10 @@ async function update(documentId: string, field: keyof Document, content: any) {
             id: documentId,
         },
         data: {
-            [field]: content,
+            [field]:
+                field.valueOf() != "metadata"
+                    ? content
+                    : JSON.stringify(content),
         },
     });
     return document;

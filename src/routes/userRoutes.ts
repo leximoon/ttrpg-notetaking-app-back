@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     registerUser,
     loginUser,
+    updateUser,
     currentUser,
     refreshToken,
 } from "../controllers/userController";
@@ -10,9 +11,8 @@ import { isAuthenticated, hasRefreshToken } from "../middlewares/authHandler";
 const userRouter = Router();
 //TODO: change user route to auth and and add new user endpoint
 
-userRouter.post("/register", registerUser);
+userRouter.post("/register", registerUser, loginUser);
 userRouter.post("/login", loginUser);
-//userRouter.post("/user/logout", logoutUser)
 
 //REFRESH TOKEN
 userRouter.post("/refresh", hasRefreshToken, refreshToken);
@@ -21,5 +21,6 @@ userRouter.post("/refresh", hasRefreshToken, refreshToken);
 userRouter.use(isAuthenticated);
 
 userRouter.get("/me", currentUser);
+userRouter.put("/:userId", updateUser);
 
 export { userRouter };

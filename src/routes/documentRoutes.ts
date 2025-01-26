@@ -6,6 +6,7 @@ import {
     deleteDocument,
     loadWorldDocuments,
     loadDocument,
+    getDocumentBreadcrumbsById,
 } from "../controllers/documentController";
 import { isAuthenticated } from "../middlewares/authHandler";
 
@@ -18,5 +19,6 @@ documentRouter.put("/update", updateDocument);
 documentRouter.delete("/delete", deleteDocument);
 documentRouter.get("/:worldId", loadWorldDocuments);
 documentRouter.get("/load/:documentId", loadDocument);
+documentRouter.get("/breadcrumbs/:documentId", getDocumentBreadcrumbsById);
 
 export { documentRouter };

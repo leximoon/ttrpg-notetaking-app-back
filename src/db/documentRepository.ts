@@ -84,6 +84,15 @@ async function findByWorldId(worldId: string, parentDocumentId?: string) {
             orderBy: {
                 title: "asc",
             },
+            select: {
+                id: true,
+                title: true,
+                worldId: true,
+                parentDocumentId: true,
+                icon: true,
+                isArchived: true,
+                isPublic: true,
+            },
         });
         return documents;
     } else {
@@ -96,9 +105,39 @@ async function findByWorldId(worldId: string, parentDocumentId?: string) {
             orderBy: {
                 title: "asc",
             },
+            select: {
+                id: true,
+                title: true,
+                worldId: true,
+                parentDocumentId: true,
+                icon: true,
+                isArchived: true,
+                isPublic: true,
+            },
         });
         return documents;
     }
 }
 
-export { create, update, del, delByWorldId, findByWorldId, findById };
+async function findNameByDocumentId(documentId: string) {
+    const document = await db.document.findUnique({
+        where: {
+            id: documentId,
+        },
+        select: {
+            title: true,
+            parentDocumentId: true,
+        },
+    });
+    return document;
+}
+
+export {
+    create,
+    update,
+    del,
+    delByWorldId,
+    findById,
+    findByWorldId,
+    findNameByDocumentId,
+};

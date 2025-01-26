@@ -4,6 +4,7 @@ import {
     del,
     findByWorldId,
     findById,
+    findNameByDocumentId,
 } from "../db/documentRepository";
 
 // CREATE DOCUMENT
@@ -43,6 +44,12 @@ export class DocumentService {
     }
     static async loadDocumentById(documentId: string) {
         const document = findById(documentId);
+
+        return document;
+    }
+
+    static async loadDocumentBreadcrumbsById(documentId: string) {
+        const document = findNameByDocumentId(documentId);
 
         return document;
     }

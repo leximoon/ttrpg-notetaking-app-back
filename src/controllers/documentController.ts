@@ -114,10 +114,41 @@ const loadDocument = async (
     }
 };
 
+const getDocumentBreadcrumbsById = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    console.log("Loading documents names...");
+    try {
+        const documentId = request.params.documentId;
+        if (!documentId) {
+            throw new CustomError("", 403);
+        }
+        let documentNameList: any[] = [];
+        const getDoc = async (documentId: string) => {
+            const documentName =
+                await DocumentService.loadDocumentBreadcrumbsById(documentId);
+
+            documentNameList.unshift(documentName?.title);
+
+            if (documentName?.parentDocumentId) {
+                await getDoc(documentName?.parentDocumentId);
+            }
+        };
+        await getDoc(documentId);
+
+        response.json(documentNameList);
+    } catch (error: any) {
+        next(error);
+    }
+};
+
 export {
     createDocument,
     updateDocument,
     deleteDocument,
     loadWorldDocuments,
+    getDocumentBreadcrumbsById,
     loadDocument,
 };

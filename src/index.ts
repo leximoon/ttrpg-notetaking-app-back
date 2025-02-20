@@ -1,39 +1,18 @@
-import express, { Request, Response } from "express";
-import { PORT } from "../config";
-import { userRouter } from "./routes/userRoutes";
-import { errorHandler } from "./middlewares/errorHandler";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import { worldRouter } from "./routes/worldRoutes";
-import { documentRouter } from "./routes/documentRoutes";
-import dotenv from "dotenv";
+import { createApp } from "./app";
+import configManager from "./config";
 
-dotenv.config();
-const app = express();
+(async () => {
+    try {
+        // TODO: init database connection
 
-//TODO: move app configurations
+        const app = createApp();
+        const port = configManager.get("PORT") || 3000;
 
-app.use(express.json());
-app.use(
-    cors({
-        credentials: true,
-        origin: ["http://localhost:3000"],
-    })
-);
-app.use(cookieParser());
-
-app.use("/user", userRouter);
-app.use("/world", worldRouter);
-app.use("/documents", documentRouter);
-
-app.get("/", (request, response) => {
-    response.send("Hello nerds!");
-});
-
-// error handling
-app.use(errorHandler);
-
-// last
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
-});
+        app.listen(port, () => {
+            console.log(`Server is running on port: ${port}`);
+        });
+    } catch (error) {
+        console.error("Error starting the server:", error);
+        process.exit(1);
+    }
+})();

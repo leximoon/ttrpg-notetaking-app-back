@@ -2,10 +2,11 @@ import express, { Application } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import configManager from "./config/index";
+import configManager from "@config/index";
 
-import { router } from "./routes";
-import { errorHandler } from "./middlewares/errorHandler";
+import { router } from "@routes";
+import { errorHandler } from "@middlewares/errorHandler";
+import { NotFoundError } from "@errors/notFoundError";
 
 export function createApp(): Application {
     const app = express();
@@ -27,9 +28,12 @@ export function createApp(): Application {
 
     // Middleware para rutas no encontradas (404)
     app.use((req, res, next) => {
-        res.status(404).json({
-            error: `The requested route '${req.originalUrl}' does not exist. Please check the URL or return to the homepage.`,
-        });
+        // Genera un error 404 para rutas no definidas
+        next(
+            new NotFoundError(
+                `The requested route '${req.originalUrl}' does not exist. Please check the URL or return to the homepage.`
+            )
+        );
     });
 
     app.use(errorHandler);

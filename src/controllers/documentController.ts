@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { DocumentService } from "../services/documentServices";
-import { CustomError } from "../utils/customError";
+import { CustomError } from "../errors/customError";
 
 type QueryParams = {
     parentDocumentId?: string;

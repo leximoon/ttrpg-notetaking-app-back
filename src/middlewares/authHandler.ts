@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { extractTokenFromHeader, verifyJWT } from "../utils/authUtils";
-import { CustomError } from "../utils/customError";
+import { CustomError } from "../errors/customError";
 
 export async function isAuthenticated(
     req: Request,

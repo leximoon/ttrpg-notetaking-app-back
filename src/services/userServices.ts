@@ -6,7 +6,7 @@ import {
     findById,
     updateUserInformation,
 } from "../db/userRepository";
-import { CustomError } from "../utils/customError";
+import { CustomError } from "../errors/customError";
 import { createToken } from "../utils/authUtils";
 
 const addUserSchema = z.object({

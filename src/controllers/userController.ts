@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/userServices";
 import { createToken } from "../utils/authUtils";
-import { CustomError } from "../utils/customError";
+import { CustomError } from "../errors/customError";
 
 const currentUser = async (
     request: Request,

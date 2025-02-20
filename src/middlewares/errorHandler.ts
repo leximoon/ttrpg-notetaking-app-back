@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { CustomError } from "@errors/customError";
 
 export function errorHandler(
     error: any,
@@ -7,19 +8,30 @@ export function errorHandler(
     res: Response,
     next: NextFunction
 ) {
-    let errorMessage = "";
-    // TODO: Refactor zod error handling
+    //Get status code from error or set default status code
+    const statusCode = error.statusCode || 500;
+
+    const errorResponse: { status: number; message: string; details?: any } = {
+        status: statusCode,
+        message: error.message || "Internal server error.",
+    };
+
     if (error instanceof ZodError) {
         res.status(400);
-        error.errors.map(({ message }) => {
-            errorMessage += `${message}. `;
-        });
+
+        const messages = error.errors.map((err) => err.message);
+        errorResponse.message = "Validation error";
+        errorResponse.details = messages;
+    } else if (error instanceof CustomError) {
+        errorResponse.message = error.message;
     } else {
-        res.status(error.statusCode || 500);
-        errorMessage = error.message || "Internal server error.";
-        console.log("An error has been occured: ", error.message);
-        console.log("Status code: ", error.statusCode);
+        console.error("Unhandled error:", error);
+        errorResponse.message = "Internal server error";
+
+        if (process.env.NODE_ENV !== "production") {
+            errorResponse.details = error.stack;
+        }
     }
 
-    res.send({ status: res.statusCode, message: errorMessage });
+    res.status(statusCode).json(errorResponse);
 }

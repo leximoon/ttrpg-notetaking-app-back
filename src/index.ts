@@ -1,10 +1,8 @@
 import { createApp } from "./app";
 import configManager from "./config";
 
-(async () => {
+const startServer = async () => {
     try {
-        // TODO: init database connection
-
         const app = createApp();
         const port = configManager.get("PORT") || 3000;
 
@@ -15,4 +13,6 @@ import configManager from "./config";
         console.error("Error starting the server:", error);
         process.exit(1);
     }
-})();
+};
+
+startServer();

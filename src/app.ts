@@ -26,16 +26,14 @@ export function createApp(): Application {
     //Routes
     app.use(router);
 
-    // Middleware para rutas no encontradas (404)
+    // Routes not found handler
     app.use((req, res, next) => {
-        // Genera un error 404 para rutas no definidas
         next(
             new NotFoundError(
                 `The requested route '${req.originalUrl}' does not exist. Please check the URL or return to the homepage.`
             )
         );
     });
-
     app.use(errorHandler);
 
     return app;

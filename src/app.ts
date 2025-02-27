@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 
 import configManager from "@config/index";
 
-import { router } from "@routes";
+import { router } from "@routes/router";
 import { errorHandler } from "@middlewares/errorHandler";
 import { NotFoundError } from "@errors/notFoundError";
 

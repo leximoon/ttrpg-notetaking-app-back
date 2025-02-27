@@ -23,4 +23,4 @@ userRouter.use(isAuthenticated);
 userRouter.get("/me", currentUser);
 userRouter.put("/:userId", updateUser);
 
-export { userRouter };
+export default userRouter;

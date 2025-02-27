@@ -21,4 +21,4 @@ documentRouter.get("/:worldId", loadWorldDocuments);
 documentRouter.get("/load/:documentId", loadDocument);
 documentRouter.get("/breadcrumbs/:documentId", getDocumentBreadcrumbsById);
 
-export { documentRouter };
+export default documentRouter;

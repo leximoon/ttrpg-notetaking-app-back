@@ -23,4 +23,4 @@ worldRouter.get("/me", getCurrentUserWorlds);
 //Get a specific world
 worldRouter.get("/:worldId", getWorld);
 
-export { worldRouter };
+export default worldRouter;

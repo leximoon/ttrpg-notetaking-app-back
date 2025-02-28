@@ -4,44 +4,102 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+enum Visibility {
+    PRIVATE
+    PUBLIC
+    INVITE_ONLY
+}
+
+enum WorldRole {
+    VIEWER
+    EDITOR
+}
+
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String  @id @map("_id") @default(cuid())
-  email     String  @unique
-  password  String
-  name      String
+    id        String   @id @default(cuid()) @map("_id")
+    email     String   @unique
+    name      String
+    role      String   @default("user")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
+    authProviders AuthProvider[]
+    worlds        World[]
+    documents     Document[]
+    memberships   WorldMember[]
 }
 
-model World{
-    id String @id @map("_id") @default(cuid())
-    name String 
-    description String
-    icon String
-    userID String
-    isPublic Boolean
-    members String[]
+model AuthProvider {
+    id         String  @id @default(cuid()) @map("_id")
+    userId     String  @unique
+    provider   String
+    providerId String?
+    password   String?
+    user       User    @relation(fields: [userId], references: [id])
+
+    @@index([provider])
+}
+
+model World {
+    id          String     @id @default(cuid()) @map("_id")
+    name        String
+    description String?
+    icon        String?
+    userId      String
+    owner       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    visibility  Visibility @default(PRIVATE)
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+
+    members   WorldMember[]
+    documents Document[]
+}
+
+model WorldMember {
+    id      String    @id @default(cuid()) @map("_id")
+    worldId String
+    userId  String
+    user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role    WorldRole @default(VIEWER) //"editor", "viewer"
+    world   World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+    @@unique([worldId, userId])
 }
 
 model Document {
-  id                String  @id @map("_id") @default(cuid())
-  title             String
-  userId            String
-  worldId           String
-  parentDocumentId  String?
-  content           String?
-  metadata          String?
-  bannerImage       String?
-  icon              String?
-  isArchived        Boolean
-  isPublic          Boolean
-} // TODO: Add indexes??
+    id    String @id @default(cuid()) @map("_id")
+    title String
 
+    //User Relation
+    userId      String
+    user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    //World Relation
+    worldId     String
+    world       World      @relation(fields: [worldId], references: [id], onDelete: Cascade)
+    parentId    String?
+    children    String[]   @default([])
+    content     String?
+    metadata    String?
+    bannerImage String?
+    icon        String?
+    isArchived  Boolean
+    visibility  Visibility @default(PRIVATE)
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+
+    @@index([parentId])
+    @@index([worldId])
+    @@index([userId])
+    @@index([parentId, worldId])
+}
+
+// TODO: Add indexes??
